@@ -1,9 +1,15 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 
+interface PaymentDetails {
+  paymentId: string;
+  amount: number;
+  status: string;
+}
+
 interface DummyPaymentProps {
-  onSuccess: (paymentDetails: any) => void;
+  onSuccess: (paymentDetails: PaymentDetails) => void;
 }
 
 export default function DummyPayment({ onSuccess }: DummyPaymentProps) {
@@ -19,10 +25,10 @@ export default function DummyPayment({ onSuccess }: DummyPaymentProps) {
     // Simulate payment process
     setTimeout(() => {
       setIsLoading(false);
-      const paymentDetails = {
+      const paymentDetails: PaymentDetails = {
         paymentId: 'DUMMY_' + Math.random().toString(36).substr(2, 9),
         amount: 1000, // You might want to pass the actual amount from the parent component
-        status: 'success'
+        status: 'success',
       };
       onSuccess(paymentDetails);
     }, 2000);
@@ -89,4 +95,3 @@ export default function DummyPayment({ onSuccess }: DummyPaymentProps) {
     </div>
   );
 }
-

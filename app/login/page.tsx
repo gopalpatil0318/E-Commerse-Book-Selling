@@ -120,7 +120,7 @@ export default function Login() {
           </form>
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Haven't Registered?{" "}
+            Haven&apos;t Registered?{" "}
             <Link href="/signup">
               <span className="font-semibold text-[#009999] hover:[#006666]">
                 Register

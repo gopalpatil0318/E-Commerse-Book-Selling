@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,14 +6,25 @@ import BottomNavigation from '@/components/BottomNavigation';
 import { useSession } from 'next-auth/react';
 import DummyPayment from '@/components/DummyPayment';
 
+interface PaymentDetails {
+    paymentId: string;
+}
+
+interface CartItem {
+    bookId: {
+        price: number;
+    };
+    quantity: number;
+}
+
 export default function Checkout() {
     const [mobileNumber, setMobileNumber] = useState('');
     const [address, setAddress] = useState('');
     const [showPayment, setShowPayment] = useState(false);
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { status } = useSession();
 
-    const handleNext = async () => {
+    const handleNext = () => {
         if (!mobileNumber || !address) {
             alert('Please fill in all fields');
             return;
@@ -21,16 +32,16 @@ export default function Checkout() {
         setShowPayment(true);
     };
 
-    const handlePaymentSuccess = async (paymentDetails: any) => {
+    const handlePaymentSuccess = async (paymentDetails: PaymentDetails) => {
         try {
-            // Fetch cart items
             const cartResponse = await fetch('/api/cart');
-            const cartItems = await cartResponse.json();
-            
-            // Calculate total
-            const total = cartItems.reduce((sum: number, item: any) => sum + (item.bookId.price * item.quantity), 0);
+            const cartItems: CartItem[] = await cartResponse.json();
 
-            // Save order to database
+            const total = cartItems.reduce(
+                (sum, item) => sum + item.bookId.price * item.quantity,
+                0
+            );
+
             const saveOrderResponse = await fetch('/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -39,12 +50,11 @@ export default function Checkout() {
                     address,
                     mobileNumber,
                     items: cartItems,
-                    total
-                })
+                    total,
+                }),
             });
 
             if (saveOrderResponse.ok) {
-                // Clear cart
                 await fetch('/api/delete-cart', { method: 'DELETE' });
                 router.push('/my-order');
             } else {
@@ -56,11 +66,11 @@ export default function Checkout() {
         }
     };
 
-    if (status === "loading") {
+    if (status === 'loading') {
         return <div>Loading...</div>;
     }
 
-    if (status !== "authenticated") {
+    if (status !== 'authenticated') {
         router.push('/login');
         return null;
     }
@@ -126,4 +136,3 @@ export default function Checkout() {
         </>
     );
 }
-

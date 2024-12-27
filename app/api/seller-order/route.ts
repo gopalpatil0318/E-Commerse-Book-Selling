@@ -3,12 +3,12 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 import dbConnect from '@/lib/dbConnect';
 import Order from '@/model/Order';
-import User from '@/model/User';
+// import User from '@/model/User';
 
 
 
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     await dbConnect();
     const session = await getServerSession(authOptions);

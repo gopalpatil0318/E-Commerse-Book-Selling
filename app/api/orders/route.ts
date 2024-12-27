@@ -1,9 +1,25 @@
 import { NextResponse } from 'next/server';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
-import  dbConnect  from '@/lib/dbConnect';
+import dbConnect from '@/lib/dbConnect';
 import Order from '@/model/Order';
-import Book from '@/model/Book';
+
+interface OrderItem {
+  bookId: {
+    _id: string;
+    price: number;
+    user: string;
+  };
+  quantity: number;
+}
+
+interface OrderData {
+  items: OrderItem[];
+  total: number;
+  address: string;
+  mobileNumber: string;
+  paymentId: string;
+}
 
 export async function POST(req: Request) {
   try {
@@ -14,25 +30,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const orderData = await req.json();
+    const orderData: OrderData = await req.json();
 
     const newOrder = new Order({
       user: session.user.id,
-      items: await Promise.all(orderData.items.map(async (item: any) => {
-        const book = await Book.findById(item.bookId._id);
+      items: await Promise.all(orderData.items.map(async (item: OrderItem) => {
         return {
           book: item.bookId._id,
           quantity: item.quantity,
           price: item.bookId.price,
           sellerId: item.bookId.user,
-          status: 'Pending'
+          status: 'Pending',
         };
       })),
       total: orderData.total,
       address: orderData.address,
       mobileNumber: orderData.mobileNumber,
       paymentId: orderData.paymentId,
-      status: 'Pending'
+      status: 'Pending',
     });
 
     await newOrder.save();
@@ -44,11 +59,11 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     await dbConnect();
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

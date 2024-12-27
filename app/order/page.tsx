@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { Loader2, Package, User, MapPin, Phone, DollarSign, CheckCircle, XCircle, IndianRupee } from 'lucide-react';
+import { Loader2, Package, User, MapPin, Phone, XCircle, IndianRupee } from 'lucide-react';
 
 import BottomNavigation from "@/components/BottomNavigation";
 

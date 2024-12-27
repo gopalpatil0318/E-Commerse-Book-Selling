@@ -4,7 +4,7 @@ import Cart from '@/model/cart';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 
-export async function DELETE(req: Request) {
+export async function DELETE() {
     try {
       await dbConnect();
       const session = await getServerSession(authOptions);
