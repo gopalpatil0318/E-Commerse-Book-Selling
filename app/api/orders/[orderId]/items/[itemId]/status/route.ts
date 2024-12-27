@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import dbConnect from '@/lib/dbConnect';
 import Order from '@/model/Order';
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 export async function PUT(
   req: Request,

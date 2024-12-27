@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import dbConnect from "@/lib/dbConnect";
-import User from "@/model/User";
+import User from "@/model/User"; 
 import { compare } from "bcrypt";
 
 declare module "next-auth" {
@@ -46,8 +46,9 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        // Explicitly cast _id to string
         return {
-          id: user._id.toString(), // Convert ObjectId to string
+          id: user._id.toString(),
           email: user.email,
           name: user.name,
           mob: user.mob,
