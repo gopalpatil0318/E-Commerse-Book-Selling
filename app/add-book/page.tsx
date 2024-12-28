@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import axios from "axios";
-
 import { useRouter } from 'next/navigation';
+import { Toaster, toast } from 'react-hot-toast';
 
 // Define the TypeScript type for the form data
 interface BookFormData {
@@ -39,8 +39,9 @@ export default function AddBook() {
     price: 0,
     description: '',
     imageUrl: null,
-    category: 'main', // default category
+    category: 'main',
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -62,11 +63,11 @@ export default function AddBook() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       let imageUrl = formData.imageUrl;
       if (formData.imageUrl && formData.imageUrl.startsWith('blob:')) {
-        // This means it's a File object, so we need to upload it
         const file = await fetch(formData.imageUrl).then(r => r.blob());
         imageUrl = await uploadImage(file as File);
       }
@@ -76,11 +77,13 @@ export default function AddBook() {
         imageUrl,
       });
 
-      console.log('Book added:', response.data);
-      router.push('/home'); // Redirect to home page after successful addition
+      toast.success('Book added successfully!');
+      router.push('/home');
     } catch (error) {
       console.error('Error adding book:', error);
-      // Handle error (e.g., show error message to user)
+      toast.error('Failed to add book. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -187,11 +190,12 @@ export default function AddBook() {
             </div>
 
             <div>
-              <button
+            <button
                 type="submit"
+                disabled={isLoading}
                 className="flex mt-4 w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#009999]"
               >
-                Add New Book
+                {isLoading ? 'Adding Book...' : 'Add New Book'}
               </button>
             </div>
           </form>

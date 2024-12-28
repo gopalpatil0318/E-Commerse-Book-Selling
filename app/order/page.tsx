@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Loader2, Package, User, MapPin, Phone, XCircle, IndianRupee } from 'lucide-react';
-
+import Image from 'next/image';
 import BottomNavigation from "@/components/BottomNavigation";
 
 interface OrderItem {
@@ -166,11 +166,15 @@ export default function SellerOrders() {
                   <div className="space-y-4">
                     {order.items.map((item) => (
                       <div key={item._id} className="flex items-start space-x-4 p-2 bg-gray-50 rounded-md">
-                        <img
-                          src={item.book.imageUrl}
-                          alt={item.book.bookTitle}
-                          className="w-16 h-20 object-cover rounded-md"
-                        />
+                        <div className="relative w-16 h-20">
+                          <Image
+                            src={item.book.imageUrl}
+                            alt={item.book.bookTitle}
+                            fill
+                            className="object-cover rounded-md"
+                            sizes="64px"
+                          />
+                        </div>
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-800">{item.book.bookTitle}</h4>
                           <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
