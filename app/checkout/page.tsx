@@ -51,9 +51,15 @@ export default function Checkout() {
                 body: JSON.stringify({ amount: total * 100 }), 
             });
             if (!orderResponse.ok) {
-                throw new Error(`Failed to create Razorpay order: ${orderResponse.statusText}`);
+                const errorData = await orderResponse.json();
+                console.error('Razorpay order creation failed:', errorData);
+                throw new Error(`Failed to create Razorpay order: ${errorData.error}. ${errorData.details || ''}. ${errorData.razorpayError ? JSON.stringify(errorData.razorpayError) : ''}`);
             }
             const orderData = await orderResponse.json();
+
+            if (!orderData.id) {
+                throw new Error('Invalid order data received from server');
+            }
 
             const options: RazorpayOrderOptions = {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -114,9 +120,13 @@ export default function Checkout() {
 
             const razorpayInstance = new Razorpay(options);
             razorpayInstance.open();
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error initiating payment:', error);
-            setErrorMessage(`Failed to initiate payment: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            if (error instanceof Error) {
+                setErrorMessage(`Failed to initiate payment: ${error.message}`);
+            } else {
+                setErrorMessage('Failed to initiate payment: Unknown error occurred');
+            }
         }
     };
 

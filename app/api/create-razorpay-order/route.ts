@@ -11,6 +11,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Razorpay credentials are missing' }, { status: 500 });
       }
 
+      console.log('Initializing Razorpay with key_id:', process.env.RAZORPAY_KEY_ID.substring(0, 5) + '...');
+
       const razorpay = new Razorpay({
         key_id: process.env.RAZORPAY_KEY_ID,
         key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -29,13 +31,14 @@ export async function POST(req: Request) {
       console.log('Razorpay order created:', order);
 
       return NextResponse.json(order);
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Error creating Razorpay order:', error);
-      if (error instanceof Error) {
-        return NextResponse.json({ error: 'Failed to create order', details: error.message }, { status: 500 });
-      } else {
-        return NextResponse.json({ error: 'Failed to create order', details: 'An unknown error occurred' }, { status: 500 });
-      }
+      return NextResponse.json({ 
+        error: 'Failed to create order', 
+        details: error.message,
+        razorpayError: error.error,
+        stack: error.stack 
+      }, { status: error.statusCode || 500 });
     }
   } else {
     return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
