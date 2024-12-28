@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import BottomNavigation from '@/components/BottomNavigation';
@@ -21,7 +21,7 @@ interface RazorpayResponse {
 export default function Checkout() {
     const [mobileNumber, setMobileNumber] = useState('');
     const [address, setAddress] = useState('');
-    const { data: session, status } = useSession();
+    const { status } = useSession();
     const { error, Razorpay } = useRazorpay();
 
     // useEffect(() => {
