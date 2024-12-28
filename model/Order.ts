@@ -15,6 +15,7 @@ export interface IOrder extends Document {
   address: string;
   mobileNumber: string;
   paymentId: string;
+  orderId: string;
   status: 'Pending' | 'Confirmed' | 'Shipped' | 'Delivered';
 }
 
@@ -37,6 +38,7 @@ const OrderSchema: Schema = new Schema({
   address: { type: String, required: true },
   mobileNumber: { type: String, required: true },
   paymentId: { type: String, required: true },
+  orderId: { type: String, required: true },
   status: { 
     type: String, 
     enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered'], 

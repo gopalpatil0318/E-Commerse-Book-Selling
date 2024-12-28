@@ -19,6 +19,7 @@ interface OrderData {
   address: string;
   mobileNumber: string;
   paymentId: string;
+  orderId: string;
 }
 
 export async function POST(req: Request) {
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
       address: orderData.address,
       mobileNumber: orderData.mobileNumber,
       paymentId: orderData.paymentId,
+      orderId: orderData.orderId,
       status: 'Pending',
     });
 
@@ -78,3 +80,4 @@ export async function GET() {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

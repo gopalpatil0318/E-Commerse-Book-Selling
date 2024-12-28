@@ -4,10 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BottomNavigation from '@/components/BottomNavigation';
 import { useSession } from 'next-auth/react';
-
-interface PaymentDetails {
-    paymentId: string;
-}
+import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 
 interface CartItem {
     bookId: {
@@ -16,17 +13,25 @@ interface CartItem {
     quantity: number;
 }
 
+interface RazorpayResponse {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+}
+
 export default function Checkout() {
     const [mobileNumber, setMobileNumber] = useState('');
     const [address, setAddress] = useState('');
     const router = useRouter();
     const { status } = useSession();
+    const { error, isLoading, Razorpay } = useRazorpay();
 
-    const initiatePayment = () => {
-        window.location.href = "trigger-razorpay-payment";
-    };
+    const handlePayment = async () => {
+        if (!mobileNumber || !address) {
+            alert('Please fill in all fields');
+            return;
+        }
 
-    const handlePaymentSuccess = async (paymentId: string) => {
         try {
             const cartResponse = await fetch('/api/cart');
             const cartItems: CartItem[] = await cartResponse.json();
@@ -36,43 +41,80 @@ export default function Checkout() {
                 0
             );
 
-            const saveOrderResponse = await fetch('/api/orders', {
+            // Create Razorpay order
+            const orderResponse = await fetch('/api/create-razorpay-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    paymentId,
-                    address,
-                    mobileNumber,
-                    items: cartItems,
-                    total,
-                }),
+                body: JSON.stringify({ amount: total * 100 }), // Convert to paise
             });
+            const orderData = await orderResponse.json();
 
-            if (saveOrderResponse.ok) {
-                await fetch('/api/delete-cart', { method: 'DELETE' });
-                router.push('/my-order');
-            } else {
-                alert('Failed to save order. Please contact support.');
-            }
+            const options: RazorpayOrderOptions = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+                amount: orderData.amount.toString(),
+                currency: "INR",
+                name: "Your Bookstore",
+                description: "Book Purchase",
+                order_id: orderData.id,
+                handler: async (response: RazorpayResponse) => {
+                    try {
+                        const verifyResponse = await fetch('/api/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                            }),
+                        });
+
+                        if (verifyResponse.ok) {
+                            const saveOrderResponse = await fetch('/api/orders', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    paymentId: response.razorpay_payment_id,
+                                    orderId: response.razorpay_order_id,
+                                    address,
+                                    mobileNumber,
+                                    items: cartItems,
+                                    total,
+                                }),
+                            });
+
+                            if (saveOrderResponse.ok) {
+                                await fetch('/api/delete-cart', { method: 'DELETE' });
+                                router.push('/my-order');
+                            } else {
+                                alert('Failed to save order. Please contact support.');
+                            }
+                        } else {
+                            alert('Payment verification failed. Please contact support.');
+                        }
+                    } catch (error) {
+                        console.error('Error processing payment:', error);
+                        alert('Failed to process payment. Please try again.');
+                    }
+                },
+                prefill: {
+                    name: "Customer Name",
+                    email: "customer@example.com",
+                    contact: mobileNumber,
+                },
+                theme: {
+                    color: "#009999",
+                },
+            };
+
+            const razorpayInstance = new Razorpay(options);
+            razorpayInstance.open();
         } catch (error) {
-            console.error('Error saving order:', error);
-            alert('Failed to save order. Please contact support.');
+            console.error('Error initiating payment:', error);
+            alert('Failed to initiate payment. Please try again.');
         }
     };
 
-    const handlePaymentFailure = (error: string) => {
-        alert("Payment Failed: " + error);
-    };
-
-    const handleNext = () => {
-        if (!mobileNumber || !address) {
-            alert('Please fill in all fields');
-            return;
-        }
-        initiatePayment();
-    };
-
-    if (status === 'loading') {
+    if (status === 'loading' || isLoading) {
         return <div>Loading...</div>;
     }
 
@@ -89,7 +131,7 @@ export default function Checkout() {
 
             <div className="p-4">
                 <div className="mt-10">
-                    <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-2">
+                    <form onSubmit={(e) => { e.preventDefault(); handlePayment(); }} className="space-y-2">
                         <div>
                             <label htmlFor="mobileNumber" className="block text-sm/6 w-full font-medium text-gray-900">
                                 Mobile Number
@@ -126,13 +168,15 @@ export default function Checkout() {
                         <div>
                             <button
                                 type="submit"
-                                className="flex mt-12 w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                disabled={isLoading}
+                                className="flex mt-12 w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
                             >
-                                Checkout
+                                {isLoading ? 'Loading...' : 'Checkout'}
                             </button>
                         </div>
                     </form>
                 </div>
+                {error && <p className="text-red-500 mt-4">Error loading Razorpay: {error}</p>}
             </div>
             <BottomNavigation />
         </>

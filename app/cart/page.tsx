@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import BottomNavigation from '@/components/BottomNavigation';
 import Link from 'next/link';
 import { MdOutlineDelete } from 'react-icons/md';
-import Image from 'next/image'; // Import the Next.js Image component
+import Image from 'next/image';
 
 interface CartItem {
   _id: string;
@@ -71,19 +71,20 @@ export default function Cart() {
         <div className="grid grid-cols-1 gap-4">
           {cartItems.map((item) => (
             <div
-              key={item._id} // Fixed: Added the missing `key` prop
+              key={item._id}
               className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex"
             >
-              <Link href={`/book-details?id=${item.bookId._id}`}>
-                <a>
-                  <Image
-                    className="rounded-t-lg h-20 w-16 object-cover"
-                    src={item.bookId.imageUrl}
-                    alt={item.bookId.bookTitle}
-                    width={64}
-                    height={80} // Optimized image loading with `next/image`
-                  />
-                </a>
+              <Link 
+                href={`/book-details?id=${item.bookId._id}`}
+                className="flex-shrink-0"
+              >
+                <Image
+                  className="rounded-t-lg h-20 w-16 object-cover"
+                  src={item.bookId.imageUrl}
+                  alt={item.bookId.bookTitle}
+                  width={64}
+                  height={80}
+                />
               </Link>
               <div className="p-2 flex-grow">
                 <h5 className="text-md font-bold tracking-tight text-gray-900 dark:text-white">
@@ -108,15 +109,11 @@ export default function Cart() {
         </h3>
 
         <div>
-          <Link href="/checkout">
-            <a>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Checkout
-              </button>
-            </a>
+          <Link
+            href="/checkout"
+            className="flex w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Checkout
           </Link>
         </div>
       </div>
@@ -125,3 +122,4 @@ export default function Cart() {
     </>
   );
 }
+

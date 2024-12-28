@@ -6,22 +6,21 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 });
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
+  const { amount } = await request.json();
+
+  const options = {
+    amount: amount,
+    currency: "INR",
+    receipt: "order_rcptid_" + Date.now(),
+  };
+
   try {
-    const { amount, currency } = await req.json();
-
-    const options = {
-      amount: amount,
-      currency: currency,
-      receipt: "receipt_" + Math.random().toString(36).substring(7),
-    };
-
     const order = await razorpay.orders.create(options);
-
     return NextResponse.json(order);
   } catch (error) {
     console.error('Error creating Razorpay order:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
   }
 }
 
