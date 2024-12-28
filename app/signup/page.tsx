@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react';
-// import axios from 'axios';
+import { useRouter } from "next/navigation";
 import Link from 'next/link';
 
 interface FormData {
@@ -12,6 +12,7 @@ interface FormData {
 }
 
 export default function Signup() {
+  const router = useRouter(); 
   const [formData, setFormData] = useState<FormData>({
     name: '',
     mob: '',
@@ -41,6 +42,7 @@ export default function Signup() {
         throw new Error('Signup failed');
       }
       console.log("sign up succesfully")
+      router.push("/login"); 
     } catch (error) {
       console.error("Error during registration", error);
     }
