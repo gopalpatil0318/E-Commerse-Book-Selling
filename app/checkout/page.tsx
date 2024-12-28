@@ -21,23 +21,22 @@ interface RazorpayResponse {
 export default function Checkout() {
     const [mobileNumber, setMobileNumber] = useState('');
     const [address, setAddress] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const { status } = useSession();
     const { error, Razorpay } = useRazorpay();
 
-    // useEffect(() => {
-    //     if (status === 'unauthenticated') {
-    //         window.location.href = '/login';
-    //     }
-    // }, [status]);
-
     const handlePayment = async () => {
         if (!mobileNumber || !address) {
-            alert('Please fill in all fields');
+            setErrorMessage('Please fill in all fields');
             return;
         }
 
         try {
+            setErrorMessage('');
             const cartResponse = await fetch('/api/cart');
+            if (!cartResponse.ok) {
+                throw new Error(`Failed to fetch cart: ${cartResponse.statusText}`);
+            }
             const cartItems: CartItem[] = await cartResponse.json();
 
             const total = cartItems.reduce(
@@ -51,6 +50,9 @@ export default function Checkout() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ amount: total * 100 }), 
             });
+            if (!orderResponse.ok) {
+                throw new Error(`Failed to create Razorpay order: ${orderResponse.statusText}`);
+            }
             const orderData = await orderResponse.json();
 
             const options: RazorpayOrderOptions = {
@@ -90,14 +92,14 @@ export default function Checkout() {
                                 await fetch('/api/delete-cart', { method: 'DELETE' });
                                 window.location.href = '/my-order';
                             } else {
-                                alert('Failed to save order. Please contact support.');
+                                setErrorMessage('Failed to save order. Please contact support.');
                             }
                         } else {
-                            alert('Payment verification failed. Please contact support.');
+                            setErrorMessage('Payment verification failed. Please contact support.');
                         }
                     } catch (error) {
                         console.error('Error processing payment:', error);
-                        alert('Failed to process payment. Please try again.');
+                        setErrorMessage('Failed to process payment. Please try again.');
                     }
                 },
                 prefill: {
@@ -114,18 +116,13 @@ export default function Checkout() {
             razorpayInstance.open();
         } catch (error) {
             console.error('Error initiating payment:', error);
-            alert('Failed to initiate payment. Please try again.');
+            setErrorMessage(`Failed to initiate payment: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     };
 
-    //status === 'loading' ||
-    if ( status === 'loading') {
+    if (status === 'loading') {
         return <div>Loading...</div>;
     }
-
-    // if (status !== 'authenticated') {
-    //     return null;
-    // }
 
     return (
         <>
@@ -172,15 +169,14 @@ export default function Checkout() {
                         <div>
                             <button
                                 type="submit"
-                                // disabled={isLoading}
                                 className="flex mt-12 w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
                             >
-                                {/* {isLoading ? 'Loading...' : 'Checkout'} */}
-                                checkout
+                                Checkout
                             </button>
                         </div>
                     </form>
                 </div>
+                {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
                 {error && <p className="text-red-500 mt-4">Error loading Razorpay: {error}</p>}
             </div>
             <BottomNavigation />
