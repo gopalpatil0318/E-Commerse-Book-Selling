@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-// import { useRouter } from "next/router";
+import Image from "next/image";
 
 export default function Home() {
 
@@ -13,13 +13,21 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  
+
   return (
-   <>
-   <div className="bg-[#009999] h-[100vh] w-[100%] pt-[200px] text-center">
-    <img src="./non-fiction.png" alt="" className="w-[350px] mx-auto transition-transform transform -translate-y-20 opacity-0 animate-slide-down"/>
-    <h3 className="mt-4 text-center text-white font-bold text-[30px] transition-transform transform translate-y-20 opacity-0 animate-slide-down">BookSwap</h3>
-    </div>
+    <>
+      <div className="bg-[#009999] h-[100vh] w-[100%] pt-[200px] text-center">
+        <div className="relative w-[350px] h-[350px] mx-auto transition-transform transform -translate-y-20 opacity-0 animate-slide-down">
+          <Image
+            src="/non-fiction.png"
+            alt="BookSwap Logo"
+            fill
+            className="object-contain"
+            sizes="350px"
+          />
+        </div>
+        <h3 className="mt-4 text-center text-white font-bold text-[30px] transition-transform transform translate-y-20 opacity-0 animate-slide-down">BookSwap</h3>
+      </div>
     </>
   );
 }

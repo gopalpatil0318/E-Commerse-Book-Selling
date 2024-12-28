@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Import useRouter
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface LoginFormData {
   email: string;
@@ -52,11 +53,15 @@ export default function Login() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img
-            alt="Your Company"
-            src="./non-fiction.png"
-            className="mx-auto h-20 w-auto"
-          />
+        <div className="relative h-20 w-20 mx-auto">
+            <Image
+              src="/non-fiction.png"
+              alt="Your Company"
+              fill
+              className="object-contain"
+              sizes="80px"
+            />
+          </div>
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             Login
           </h2>

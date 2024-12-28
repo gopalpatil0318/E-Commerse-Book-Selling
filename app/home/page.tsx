@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import BottomNavigation from "../../components/BottomNavigation";
 import { FaUserCircle } from "react-icons/fa";
 
-// TypeScript types
 interface Book {
   _id: string;
   bookTitle: string;
@@ -64,7 +64,6 @@ export default function Home() {
 
   return (
     <>
-      {/* Header */}
       <div className="bg-[#009999] p-3 flex justify-between">
         <h4 className="text-xl/9 font-bold pl-2 text-white">BookSwap</h4>
         <Link href="/profile">
@@ -72,16 +71,18 @@ export default function Home() {
         </Link>
       </div>
 
-      {/* Carousel */}
       <div className="duration-700 ease-in-out w-full p-4" data-carousel-item>
-        <img
-          src="https://wallpapercave.com/wp/wp2036967.jpg"
-          className="w-full block rounded-2xl h-40"
-          alt="..."
-        />
+        <div className="relative w-full h-40">
+          <Image
+            src="https://wallpapercave.com/wp/wp2036967.jpg"
+            alt="Banner"
+            fill
+            className="rounded-2xl object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
       </div>
 
-      {/* Categories */}
       <div className="p-4 py-0">
         <div className="w-full overflow-x-auto hide-scrollbar">
           <div className="inline-flex rounded-md shadow-sm gap-2 w-max">
@@ -91,7 +92,15 @@ export default function Home() {
                 className={`cursor-pointer rounded-2xl pr-4 p-2 flex gap-2 ${selectedCategory === category.id ? 'bg-[#009999] text-white' : 'bg-[#00999920]'}`}
                 onClick={() => setSelectedCategory(category.id)}
               >
-                <img src="./non-fiction.png" className="w-[40px] h-auto" alt="" />
+                <div className="relative w-[40px] h-[40px]">
+                  <Image
+                    src="/non-fiction.png"
+                    alt={category.name}
+                    fill
+                    className="object-contain"
+                    sizes="40px"
+                  />
+                </div>
                 {category.name}
               </div>
             ))}
@@ -105,7 +114,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Books */}
       <div className="p-4">
         {isLoading ? (
           <div className="text-center">Loading...</div>
@@ -116,11 +124,15 @@ export default function Home() {
             {books.map((book) => (
               <Link key={book._id} href={`/book-details?id=${book._id}`}>
                 <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                  <img
-                    className="rounded-t-lg h-40 w-full object-cover"
-                    src={book.imageUrl}
-                    alt={book.bookTitle}
-                  />
+                  <div className="relative h-40 w-full">
+                    <Image
+                      className="rounded-t-lg object-cover"
+                      src={book.imageUrl}
+                      alt={book.bookTitle}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                   <div className="p-2">
                     <h5 className="mb-2 text-md font-bold tracking-tight text-gray-900 dark:text-white">
                       {book.bookTitle}
@@ -136,7 +148,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Bottom Navigation */}
       <BottomNavigation />
     </>
   );
