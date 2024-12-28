@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
-import {toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 // Define the TypeScript type for the form data
 interface BookFormData {
@@ -11,7 +11,7 @@ interface BookFormData {
   authorName: string;
   price: number;
   description: string;
-  imageUrl: string | null; 
+  imageUrl: string | null;
   category: string;
 }
 
@@ -24,7 +24,7 @@ const uploadImage = async (file: File): Promise<string> => {
 
   try {
     const response = await axios.post('https://api.cloudinary.com/v1_1/dae4fjmsn/image/upload/', formData);
-    return response.data.url; 
+    return response.data.url;
   } catch {
     throw new Error('Image upload failed');
   }
@@ -56,7 +56,7 @@ export default function AddBook() {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        imageUrl: URL.createObjectURL(file), 
+        imageUrl: URL.createObjectURL(file),
       }));
     }
   };
@@ -185,12 +185,19 @@ export default function AddBook() {
                   <option value="non-fiction">Non-Fiction</option>
                   <option value="science">Science</option>
                   <option value="history">History</option>
+                  <option value="education">Education</option>
+                  <option value="comic">Comic</option>
+                  <option value="spiritual">Spiritual</option>
+                  <option value="literature">Literature</option>
+                  <option value="health">Health</option>
+                  <option value="finance">Finance</option>
+
                 </select>
               </div>
             </div>
 
             <div>
-            <button
+              <button
                 type="submit"
                 disabled={isLoading}
                 className="flex mt-4 w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#009999]"

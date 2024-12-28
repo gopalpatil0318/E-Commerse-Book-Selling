@@ -25,8 +25,11 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   const categories: Category[] = [
+    { id: 'main', name: "Main" },
     { id: 'fiction', name: "Fiction" },
     { id: 'non-fiction', name: "Non-Fiction" },
+    { id: 'science', name: "Science" },
+    { id: 'history', name: "History" },
     { id: 'education', name: "Education" },
     { id: 'comic', name: "Comic" },
     { id: 'spiritual', name: "Spiritual" },
