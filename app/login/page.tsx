@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Toaster, toast } from 'react-hot-toast';
+import {  toast } from 'react-hot-toast';
 
 interface LoginFormData {
   email: string;

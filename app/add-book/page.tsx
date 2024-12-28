@@ -3,7 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
-import { Toaster, toast } from 'react-hot-toast';
+import {toast } from 'react-hot-toast';
 
 // Define the TypeScript type for the form data
 interface BookFormData {
@@ -24,7 +24,7 @@ const uploadImage = async (file: File): Promise<string> => {
 
   try {
     const response = await axios.post('https://api.cloudinary.com/v1_1/dae4fjmsn/image/upload/', formData);
-    return response.data.url; // Return the image URL
+    return response.data.url; 
   } catch {
     throw new Error('Image upload failed');
   }
@@ -76,7 +76,7 @@ export default function AddBook() {
         ...formData,
         imageUrl,
       });
-
+      console.log(response);
       toast.success('Book added successfully!');
       router.push('/home');
     } catch (error) {
