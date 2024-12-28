@@ -49,7 +49,7 @@ export default function Checkout() {
             const orderResponse = await fetch('/api/create-razorpay-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: total * 100 }), // Convert to paise
+                body: JSON.stringify({ amount: total * 100 }), 
             });
             const orderData = await orderResponse.json();
 
