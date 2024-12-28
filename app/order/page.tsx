@@ -58,12 +58,12 @@ export default function SellerOrders() {
 
   const updateItemStatus = async (orderId: string, itemId: string, newStatus: string) => {
     try {
-      const response = await fetch(`/api/orders/${orderId}/items/${itemId}/status`, {
+      const response = await fetch(`/api/orders/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ orderId, itemId, status: newStatus }),
       });
 
       if (!response.ok) {

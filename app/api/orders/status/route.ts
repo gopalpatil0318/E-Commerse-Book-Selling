@@ -1,13 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import dbConnect from '@/lib/dbConnect';
 import Order from '@/model/Order';
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { orderId: string; itemId: string } }
-) {
+export async function PUT(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -18,8 +15,14 @@ export async function PUT(
       );
     }
 
-    const { status } = await req.json();
-    const { orderId, itemId } = params;
+    const { orderId, itemId, status } = await req.json();
+
+    if (!orderId || !itemId || !status) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
 
     await dbConnect();
 

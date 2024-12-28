@@ -1,11 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import Book from '@/model/Book';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     await dbConnect();
-    const book = await Book.findById(params.id);
+    
+    const { id } = await request.json();
+    
+    if (!id) {
+      return NextResponse.json({ error: 'Book ID is required' }, { status: 400 });
+    }
+
+    const book = await Book.findById(id);
     
     if (!book) {
       return NextResponse.json({ error: 'Book not found' }, { status: 404 });

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Image from 'next/image';
 import BottomNavigation from '@/components/BottomNavigation';
 import { RiSearchLine } from "react-icons/ri";
 import Link from 'next/link';
@@ -90,11 +91,15 @@ export default function Search() {
             {filteredBooks.map((book) => (
               <Link key={book._id} href={`/book-details?id=${book._id}`}>
                 <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                  <img
-                    className="rounded-t-lg h-40 w-full object-cover"
-                    src={book.imageUrl}
-                    alt={book.bookTitle}
-                  />
+                  <div className="relative h-40 w-full">
+                    <Image
+                      className="rounded-t-lg object-cover"
+                      src={book.imageUrl}
+                      alt={book.bookTitle}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
                   <div className="p-2">
                     <h5 className="mb-2 text-md font-bold tracking-tight text-gray-900 dark:text-white">
                       {book.bookTitle}

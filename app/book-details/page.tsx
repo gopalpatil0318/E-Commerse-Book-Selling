@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BottomNavigation from '../../components/BottomNavigation';
 import { FaUserCircle } from "react-icons/fa";
@@ -15,7 +16,7 @@ interface Book {
   imageUrl: string;
 }
 
-export default function BookDetails() {
+function BookDetailsContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [book, setBook] = useState<Book | null>(null);
@@ -32,7 +33,14 @@ export default function BookDetails() {
             }
 
             try {
-                const response = await fetch(`/api/get-books/${id}`);
+                const response = await fetch('/api/get-book', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id }),
+                });
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch book details');
                 }
@@ -86,7 +94,15 @@ export default function BookDetails() {
             </div>
 
             <div className="w-full max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <img className="p-8 rounded-t-lg w-full" src={book.imageUrl} alt={book.bookTitle} />
+                <div className="relative w-full h-64">
+                    <Image
+                        className="rounded-t-lg object-cover"
+                        src={book.imageUrl}
+                        alt={book.bookTitle}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                </div>
                 <div className="px-5 pb-5">
                     <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{book.bookTitle}</h5>
                     <p><b>By {book.authorName}</b></p>
@@ -105,6 +121,14 @@ export default function BookDetails() {
 
             <BottomNavigation />
         </>
+    );
+}
+
+export default function BookDetails() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <BookDetailsContent />
+        </Suspense>
     );
 }
 
