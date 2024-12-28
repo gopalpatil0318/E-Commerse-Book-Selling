@@ -1,10 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import BottomNavigation from '@/components/BottomNavigation';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
+import BottomNavigation from '@/components/BottomNavigation';
 
 interface CartItem {
     bookId: {
@@ -22,9 +21,14 @@ interface RazorpayResponse {
 export default function Checkout() {
     const [mobileNumber, setMobileNumber] = useState('');
     const [address, setAddress] = useState('');
-    const router = useRouter();
-    const { status } = useSession();
-    const { error, isLoading, Razorpay } = useRazorpay();
+    const { data: session, status } = useSession();
+    const { error, Razorpay } = useRazorpay();
+
+    // useEffect(() => {
+    //     if (status === 'unauthenticated') {
+    //         window.location.href = '/login';
+    //     }
+    // }, [status]);
 
     const handlePayment = async () => {
         if (!mobileNumber || !address) {
@@ -84,7 +88,7 @@ export default function Checkout() {
 
                             if (saveOrderResponse.ok) {
                                 await fetch('/api/delete-cart', { method: 'DELETE' });
-                                router.push('/my-order');
+                                window.location.href = '/my-order';
                             } else {
                                 alert('Failed to save order. Please contact support.');
                             }
@@ -114,14 +118,14 @@ export default function Checkout() {
         }
     };
 
-    if (status === 'loading' || isLoading) {
+    //status === 'loading' ||
+    if ( status === 'loading') {
         return <div>Loading...</div>;
     }
 
-    if (status !== 'authenticated') {
-        router.push('/login');
-        return null;
-    }
+    // if (status !== 'authenticated') {
+    //     return null;
+    // }
 
     return (
         <>
@@ -168,10 +172,11 @@ export default function Checkout() {
                         <div>
                             <button
                                 type="submit"
-                                disabled={isLoading}
+                                // disabled={isLoading}
                                 className="flex mt-12 w-full justify-center rounded-md bg-[#009999] px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-[#006666] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
                             >
-                                {isLoading ? 'Loading...' : 'Checkout'}
+                                {/* {isLoading ? 'Loading...' : 'Checkout'} */}
+                                checkout
                             </button>
                         </div>
                     </form>
