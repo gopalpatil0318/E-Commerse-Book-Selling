@@ -93,7 +93,7 @@ export default function Home() {
             {categories.map((category) => (
               <div
                 key={category.id}
-                className={`cursor-pointer rounded-2xl pr-4 p-2 flex gap-2 ${selectedCategory === category.id ? 'bg-[#009999] text-white' : 'bg-[#00999920]'}`}
+                className={`cursor-pointer rounded-2xl pr-4 p-2 flex items-center align-middle gap-2 ${selectedCategory === category.id ? 'bg-[#009999] text-white' : 'bg-[#00999920]'}`}
                 onClick={() => setSelectedCategory(category.id)}
               >
                 <div className="relative w-[40px] h-[40px]">
@@ -104,7 +104,7 @@ export default function Home() {
                     className="object-contain"
                     sizes="40px"
                   />
-                </div>
+                </div>  
                 {category.name}
               </div>
             ))}

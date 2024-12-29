@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {  toast } from 'react-hot-toast'
+import fiction from "@/public/non-fiction.png"
 
 interface FormData {
   name: string;
@@ -59,7 +60,7 @@ export default function Signup() {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <div className="relative h-20 w-20 mx-auto">
             <Image
-              src="/non-fiction.png"
+              src={fiction}
               alt=""
               fill
               className="object-contain"
