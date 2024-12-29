@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import BottomNavigation from "../../components/BottomNavigation";
 import { FaUserCircle } from "react-icons/fa";
+import { Loader2 } from "lucide-react";
 
 interface Book {
   _id: string;
@@ -119,7 +120,10 @@ export default function Home() {
 
       <div className="p-4">
         {isLoading ? (
-          <div className="text-center">Loading...</div>
+           <div className="flex flex-col items-center  min-h-screen">
+           <Loader2 className="w-10 h-10 text-[#009999] animate-spin" />
+           <p className="mt-4 text-lg font-semibold text-gray-700">Loading Book...</p>
+         </div>
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
         ) : (

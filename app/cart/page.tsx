@@ -5,6 +5,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import Link from 'next/link';
 import { MdOutlineDelete } from 'react-icons/md';
 import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 
 interface CartItem {
   _id: string;
@@ -58,7 +59,10 @@ export default function Cart() {
 
   const totalPrice = cartItems.reduce((total, item) => total + item.bookId.price * item.quantity, 0);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className="flex flex-col items-center justify-center min-h-screen">
+    <Loader2 className="w-10 h-10 text-[#009999] animate-spin" />
+    <p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
+  </div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -74,7 +78,7 @@ export default function Cart() {
               key={item._id}
               className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex"
             >
-              <Link 
+              <Link
                 href={`/book-details?id=${item.bookId._id}`}
                 className="flex-shrink-0"
               >

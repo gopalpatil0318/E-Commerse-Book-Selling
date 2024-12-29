@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import BottomNavigation from '../../components/BottomNavigation';
 import { FaUserCircle } from "react-icons/fa";
 import { RoundLoader } from '@/components/round-loader';
+import { Loader2 } from 'lucide-react';
 
 interface Book {
   _id: string;
@@ -82,10 +83,10 @@ function BookDetailsContent() {
     };
 
     if (isLoading) return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-          <RoundLoader size={80} color="#009999" borderWidth={6} />
-          <p className="mt-4 text-lg font-semibold text-gray-600">Loading book details...</p>
-        </div>
+        <div className="flex flex-col items-center justify-center min-h-screen">
+        <Loader2 className="w-10 h-10 text-[#009999] animate-spin" />
+        <p className="mt-4 text-lg font-semibold text-gray-700">Loading Book Details...</p>
+      </div>
       );
     if (error) return <div>Error: {error}</div>;
     if (!book) return <div>No book found</div>;
@@ -133,10 +134,10 @@ function BookDetailsContent() {
 export default function BookDetails() {
     return (
         <Suspense fallback={
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-              <RoundLoader size={80} color="#009999" borderWidth={6} />
-              <p className="mt-4 text-lg font-semibold text-gray-600">Loading book details...</p>
-            </div>
+            <div className="flex flex-col items-center justify-center min-h-screen">
+            <Loader2 className="w-10 h-10 text-[#009999] animate-spin" />
+            <p className="mt-4 text-lg font-semibold text-gray-700">Loading Book Details...</p>
+          </div>
           }>
       
             <BookDetailsContent />

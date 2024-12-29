@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import BottomNavigation from '@/components/BottomNavigation';
+import { Loader2 } from 'lucide-react';
 
 interface CartItem {
     bookId: {
@@ -131,7 +132,10 @@ export default function Checkout() {
     };
 
     if (status === 'loading') {
-        return <div>Loading...</div>;
+        return <div className="flex flex-col items-center justify-center min-h-screen">
+        <Loader2 className="w-10 h-10 text-[#009999] animate-spin" />
+        <p className="mt-4 text-lg font-semibold text-gray-700">Loading...</p>
+      </div>
     }
 
     return (

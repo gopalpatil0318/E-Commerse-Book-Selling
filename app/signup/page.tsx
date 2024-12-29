@@ -60,7 +60,7 @@ export default function Signup() {
         <div className="relative h-20 w-20 mx-auto">
             <Image
               src="/non-fiction.png"
-              alt="Your Company"
+              alt=""
               fill
               className="object-contain"
               sizes="80px"
