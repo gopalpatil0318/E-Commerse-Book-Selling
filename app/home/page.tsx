@@ -123,7 +123,7 @@ export default function Home() {
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 mb-20">
             {books.map((book) => (
               <Link key={book._id} href={`/book-details?id=${book._id}`}>
                 <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">

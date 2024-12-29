@@ -35,3 +35,14 @@ body {
 .hide-scrollbar::-webkit-scrollbar {
   display: none !important; /* For Chrome, Safari, and Opera */
 }
+
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.1;
+  }
+}
+

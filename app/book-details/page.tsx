@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BottomNavigation from '../../components/BottomNavigation';
 import { FaUserCircle } from "react-icons/fa";
+import { RoundLoader } from '@/components/round-loader';
 
 interface Book {
   _id: string;
@@ -80,7 +81,12 @@ function BookDetailsContent() {
         }
     };
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+          <RoundLoader size={80} color="#009999" borderWidth={6} />
+          <p className="mt-4 text-lg font-semibold text-gray-600">Loading book details...</p>
+        </div>
+      );
     if (error) return <div>Error: {error}</div>;
     if (!book) return <div>No book found</div>;
 
@@ -93,7 +99,7 @@ function BookDetailsContent() {
                 </Link>
             </div>
 
-            <div className="w-full max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <div className="w-full max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-20">
                 <div className="relative w-full h-64">
                     <Image
                         className="rounded-t-lg object-cover"
@@ -126,7 +132,13 @@ function BookDetailsContent() {
 
 export default function BookDetails() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+              <RoundLoader size={80} color="#009999" borderWidth={6} />
+              <p className="mt-4 text-lg font-semibold text-gray-600">Loading book details...</p>
+            </div>
+          }>
+      
             <BookDetailsContent />
         </Suspense>
     );
