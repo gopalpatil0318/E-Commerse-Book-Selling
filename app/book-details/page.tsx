@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BottomNavigation from '../../components/BottomNavigation';
 import { FaUserCircle } from "react-icons/fa";
-import { RoundLoader } from '@/components/round-loader';
 import { Loader2 } from 'lucide-react';
 
 interface Book {
